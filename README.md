@@ -1,92 +1,77 @@
-# Weekopdracht RabbitMQ
+# Opdracht
 
+## Voorbereiding
+* Zorg dat je Docker geinstalleerd en werkend hebt
+* Lees uit het boek van Sander Hoogendoorn (Pragmatisch Modelleren met UML) de [pagina's 2, 3 en 4](https://books.google.nl/books?id=6xZS5GL0d1MC&pg=PA1&hl=nl&source=gbs_toc_r&cad=3) over Dare2Date.
 
+## Casus Dare2Date
 
-## Getting started
+### Inleiding
+Er zijn verschillende processen binnen de datingservice die niet synchroon geïmplementeerd kunnen worden met bijvoorbeeld een webservice. In deze opdracht ga je gebruik maken van RabbitMQ en op twee manieren een service realiseren:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+* Point to point:       Queues
+* Publish-Subscribe:    Topics
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### UML Diagrammen
+Gegeven is het onderstaande use case model en een sequencediagram. De KandidaatAbonnee is een menselijke actor die vanuit een browser of app een HTTP POST doet met een AbonneeAanvraag, de EuroCard, Uitgever en Abonnee zijn externe systemen die luisteren naar binnenkomende berichten. EuroCard is via een queue gekoppeld aan de webservice en geeft true terug als het credicardnummer even is en false als het oneven is. De Uitgever en Abonnee luisteren naar een topic en het enige dat zij doen is de binnenkomende notificatie printen/loggen.
 
-## Add your files
+![Use Case Model Dare2Date](https://gitlab.devops.aimsites.nl/rabbitmq/workshop-rabbitmq/-/raw/main/opdracht/Dare2Date/Use%20Case%20Model/Dare2Date.png "Use Case Model Dare2Date")
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+![Happy Flow Dare2Date](http://gitlab.devops.aimsites.nl/rabbitmq/workshop-rabbitmq/-/raw/main/opdracht/Dare2Date/Happy%20Flow/Happy%20Flow.png "Happy Flow  Dare2Date")
 
-```
-cd existing_repo
-git remote add origin http://gitlab.devops.aimsites.nl/d.vanbruxvoort/weekopdracht-rabbitmq.git
-git branch -M main
-git push -uf origin main
-```
+Er zijn uiteindelijke 5 deelsystemen die in een eigen Docker container draaien, getuige het deployment diagram:
 
-## Integrate with your tools
+![Deployment Dare2Date](http://gitlab.devops.aimsites.nl/rabbitmq/workshop-rabbitmq/-/raw/main/opdracht/Dare2Date/Deployment/Deployment%20Dare2Date.png "Deployment Dare2Date")
 
-- [ ] [Set up project integrations](http://gitlab.devops.aimsites.nl/d.vanbruxvoort/weekopdracht-rabbitmq/-/settings/integrations)
+* De AbonneeRegistratie webservice die samenwerkt (lokale functieaanroepen in-process) met de classes CreditcardValidatieClient en NotificatieClient
+* De EuroCard service 
+* De Uitgever service
+* De Abonnee service
+* De RabbitMQ Broker
 
-## Collaborate with your team
+### Opdrachtdetaillering
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Realiseer in een team de weergegeven deelsystemen met _minimaal twee_ verschillende programmeertalen (er zijn [legio clients/frameworks](https://www.rabbitmq.com/devtools.html)) waarbij je minimaal 1 *queue* en een 1 *topic* gebruikt. Deploy elk deelsysteem in een eigen Docker container. Elk teamlid maakt typisch 1 service (bij 4 teamleden). Lever de opdracht in in een gezamenlijke (privé) git repository waarbij je met 1 enkele docker-compose instructie alle deelsystemen en de RabbitMQ broker kan starten. Schrijf een README.md ([MS standaard](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops)) waarmee de beoordelaar het direct kan uitvoeren op zijn/haar eigen systeem. Maak een issue aan voor de beoordeling en assign deze aan de docent (toegang geven tot prive repo).
 
-## Test and Deploy
+### Beoordelingsmodel (2021)
 
-Use the built-in continuous integration in GitLab.
+- A. Voldoet aan functionele eisen
+   - 10 Volledig (4 van de 4)
+   - 7 Grotendeels (3 van de 4)
+   - 5 Beperkt (2 van de 4)
+   - 1 Nauwelijks (1 van de 4)
+- B. Aantal verschillende programmeertalen
+   - 10 meer dan 2
+   - 7 Precies 2
+   - 5 Precies 1
+   - 1 Geen (0)
+- C. Codekwaliteit (clean code, tests, etc.) 
+   - 10 Clean code en voorzien van unittests
+   - 7 Clean code
+   - 5 Code bevat maximaal vijf verschillende bad smells
+   - 1 Code bevat meer dan vijf verschillende bad smells
+- D. Deploybaar op Docker
+   - 10 Volledig (4 van de 4 services)
+   - 7 Grotendeels (3 van de 4)
+   - 5 Beperkt (2 van de 4)
+   - 1 Nauwelijks (1 van de 4) 
+- E. README
+   - 10 100% uitvoerbaar
+   - 7 Met 1 of 2 omissies uitvoerbaar
+   - 5 Onvoldoende overdraagbaar
+   - 1 Ontbreekt of is leeg
+- F. Teamwork (Knockout)
+  - JA 
+  - NEE
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Als tabel: 
 
-***
+| | 10                             | 7                                    | 5                               | 1                                                 | Weging                                            |
+|------------------------------------|--------------------------------------|---------------------------------|---------------------------------------------------|---------------------------------------------------|-----|
+| **Voldoet aan functionele eisen**  | Volledig (4 van de 4 services)       | Grotendeels (3 van de 4)        | Beperkt (2 van de 4)                              | Nauwelijks (1 van de 4)                           | 40% |
+| **Aantal verschillende programmeertalen** | meer dan 2                           | 2                               | 1                                                 | 0                                                 | 20% |
+| **Codekwaliteit** (clean code, tests etc.) | Clean code en voorzien van unittests | Clean code                      | Code bevat maximaal vijf verschillende bad smells | Code bevat meer dan vijf verschillende bad smells | 10% |
+| **Deploybaar op Docker**            | Volledig (4 van de 4 services)       | Grotendeels (3 van de 4)        | Beperkt (2 van de 4)                              | Nauwelijks (1 van de 4)                           | 20% |
+| **README**                          | 100% uitvoerbaar                     | Met 1 of 2 omissies uitvoerbaar | Onvoldoende overdraagbaar                         | Ontbreekt of is leeg                              | 10% |
+| **Teamwork** (Knockout)             |                                      |                                 |                                                   |                                                   | JA/NEE  |
 
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
