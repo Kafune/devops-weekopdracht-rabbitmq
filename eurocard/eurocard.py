@@ -3,7 +3,8 @@ import pika
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
 channel.queue_declare(queue='creditcard_queue')
-channel.queue_declare(queue='creditcard_validation_queue')
+channel.exchange_declare(exchange='creditcard_validation',
+                         exchange_type='direct')
 
 def is_valid_creditcard(creditcard_number):
     creditcard_number = creditcard_number.replace(' ', '').replace('-', '')
@@ -24,7 +25,7 @@ def is_valid_creditcard(creditcard_number):
 def callback(ch, method, properties, body):
     creditcard_number = body.decode('utf-8')
     is_valid = is_valid_creditcard(creditcard_number)
-    channel.basic_publish(exchange='', routing_key='creditcard_validation_queue', body=str(is_valid))
+    channel.basic_publish(exchange='creditcard_validation', routing_key='creditcard_validation', body=str(is_valid))
     print(f"Creditcard: '{creditcard_number}' valid:'{is_valid}'")
 
 channel.basic_consume(queue='creditcard_queue', on_message_callback=callback, auto_ack=True)
