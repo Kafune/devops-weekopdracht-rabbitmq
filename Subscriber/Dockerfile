@@ -1,9 +1,10 @@
 FROM node:18
-WORKDIR /Subscriber 
-EXPOSE 8080
+WORKDIR /Subscriber
 
 COPY package*.json ./
 RUN npm install
 
+EXPOSE 5672
+
 COPY . .
-CMD [ "node", "./src/receive-subscription-topic.js" "#"]
+CMD [ "node", "./src/receive-subscription-topic.js", "#" ]
