@@ -13,7 +13,8 @@ services:
     volumes:
         - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
         - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
-
+  subscriber:
+    build: ./Subscriber
 networks:
   default:
     driver: bridge
