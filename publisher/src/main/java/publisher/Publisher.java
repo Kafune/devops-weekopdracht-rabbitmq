@@ -5,14 +5,18 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 public class Publisher {
 
     private static final String EXCHANGE_NAME = "publisher";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, TimeoutException {
         // Create connection
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost("rabbitmq");
+        factory.setPort(5672);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
@@ -20,12 +24,12 @@ public class Publisher {
         channel.exchangeDeclare(EXCHANGE_NAME, "topic");
         String queueName = channel.queueDeclare().getQueue();
 
-        if (argv.length < 1) {
+        if (args.length < 1) {
             System.err.println("Usage: ReceiveLogsTopic [binding_key]...");
             System.exit(1);
         }
 
-        for (String bindingKey : argv) {
+        for (String bindingKey : args) {
             channel.queueBind(queueName, EXCHANGE_NAME, bindingKey);
         }
 
