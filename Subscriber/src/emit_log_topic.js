@@ -2,7 +2,7 @@
 
 var amqp = require('amqplib/callback_api');
 
-amqp.connect('amqp://localhost', function(error0, connection) {
+amqp.connect('amqp://rabbitmq:5672', function(error0, connection) {
   if (error0) {
     throw error0;
   }
@@ -13,7 +13,7 @@ amqp.connect('amqp://localhost', function(error0, connection) {
     var exchange = 'topic_logs';
     var args = process.argv.slice(2);
     var key = (args.length > 0) ? args[0] : 'anonymous.info';
-    var msg = args.slice(1).join(' ') || 'Hello World!';
+    var msg = args.slice(1).join(' ') || 'Subscriber message';
 
     channel.assertExchange(exchange, 'topic', {
       durable: false
