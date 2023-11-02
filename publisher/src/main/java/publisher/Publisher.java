@@ -9,7 +9,7 @@ public class Publisher {
 
     private static final String EXCHANGE_NAME = "publisher";
 
-    public static void main(String[] argv) throws Exception {
+    public static void main(String[] args) {
         // Create connection
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
