@@ -1,7 +1,7 @@
 import pika
 
 # Maak een verbinding met RabbitMQ
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+connection = pika.BlockingConnection(pika.ConnectionParameters('127.0.0.1'))
 channel = connection.channel()
 
 # De naam van de wachtrij waarnaar je het bericht wilt sturen
