@@ -30,6 +30,14 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+  eurocard:
+   build: ./eurocard
+   depends_on:
+    rabbitmq:
+      condition: service_healthy
+   ports: 
+   - 5000:5000
+  
 networks:
   default:
     driver: bridge
