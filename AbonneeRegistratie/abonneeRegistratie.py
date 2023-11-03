@@ -1,8 +1,11 @@
 from flask import Flask, request
 import pika
 import uuid
+import logging
 
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 class CreditcardValidatieClient(object):
 
@@ -64,9 +67,9 @@ notificatieClient = NotificatieClient()
 def receive_post():
     data = request.get_data()
     decoded_data = data.decode('utf-8')
-    print(f" Requesting creditcardValidation({decoded_data})")
+    logging.info(f"Requesting creditcardValidation({decoded_data})")
     response = creditcardValidatieClient.call(decoded_data)
-    print(f" Received: {response}")
+    logging.info(f"Received: {response}")
 
     if response:
         notificatieClient.send_notification('publish.subscribe', f'Validated Creditcardnumber: {decoded_data}')
@@ -74,5 +77,5 @@ def receive_post():
     return "Data received and sent to RabbitMQ successfully!"
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080) 
+    app.run(debug=True, host='0.0.0.0', port=8080) 
 
