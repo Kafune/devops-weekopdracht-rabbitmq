@@ -7,7 +7,7 @@ RUN mvn -f /home/app/pom.xml clean package
 
 # Package stage
 FROM openjdk:11-jre-slim
-WORKDIR /app
-COPY --from=build /home/app/target/publisher.jar publisher.jar
+WORKDIR /home/app
+COPY ./target/publisher-jar-with-dependencies.jar publisher.jar
 ENTRYPOINT ["java", "-jar", "publisher.jar"]
 EXPOSE 9000
