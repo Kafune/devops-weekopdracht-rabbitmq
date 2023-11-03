@@ -7,4 +7,4 @@ RUN npm install
 EXPOSE 5672
 
 COPY . .
-CMD [ "node", "./src/abonnee-service.js", "#" ]
+CMD [ "node", "./src/abonnee-service.js", "*.subscribe" ]

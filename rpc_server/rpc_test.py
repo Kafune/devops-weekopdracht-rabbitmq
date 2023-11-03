@@ -1,7 +1,10 @@
 import pika
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='localhost'))
+    pika.ConnectionParameters(host='172.17.0.2', port=5672))
 
 channel = connection.channel()
 
@@ -13,7 +16,7 @@ def is_even(n):
 def on_request(ch, method, props, body):
     n = int(body)
 
-    print(f" [.] Is even({n})")
+    logging.info(f" Is even({n})")
     response = is_even(n)
 
     ch.basic_publish(exchange='',

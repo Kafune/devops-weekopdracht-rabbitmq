@@ -1,5 +1,9 @@
 import pika
 import time
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logger = logging.getLogger(__name__)
 
 def is_valid_creditcard(creditcard_number):
     creditcard_number = creditcard_number.replace(' ', '').replace('-', '')
@@ -20,9 +24,11 @@ def is_valid_creditcard(creditcard_number):
 def callback(ch, method, properties, body):
     creditcard_number = body.decode('utf-8')
     is_valid = is_valid_creditcard(creditcard_number)
+    logger.info(f"Received Creditcard: '{creditcard_number}', Valid: '{is_valid}'")
+  
     channel.basic_publish(exchange='creditcard_validation', routing_key='creditcard_validation', body=str(is_valid))
     print(f"Creditcard: '{creditcard_number}' valid:'{is_valid}'")
-
+      
 while True:
     try:
         connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.17.0.2', port=5672))
@@ -32,6 +38,7 @@ while True:
 
         channel.basic_consume(queue='creditcard_queue', on_message_callback=callback, auto_ack=True)
         print('Waiting for messages. Press CTRL+C to stop.')
+        logger.info('Waiting for messages. Press CTRL+C to stop.')
         channel.start_consuming()
 
     except pika.exceptions.AMQPConnectionError as err:
