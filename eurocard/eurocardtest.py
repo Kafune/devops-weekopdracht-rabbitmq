@@ -1,19 +1,32 @@
 import pika
+import logging
 
-# Maak een verbinding met RabbitMQ
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', heartbeat=3600))
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+
+connection = pika.BlockingConnection(
+    pika.ConnectionParameters(host='rabbitmq', port=5672, heartbeat=3600))
+
 channel = connection.channel()
 
-# De naam van de wachtrij waarnaar je het bericht wilt sturen
-queue_name = 'creditcard_queue'
+channel.queue_declare(queue='register')
 
-# Het bericht dat je wilt verzenden
-message = '6703 4444 4444 4449'  # Vervang dit door het gewenste creditcardnummer
+def is_even(n):
+    return n & 1 == 0
 
-# Publiceer het bericht naar de wachtrij
-channel.basic_publish(exchange='', routing_key=queue_name, body=message)
+def on_request(ch, method, props, body):
+    n = int(body)
 
-print(f" [x] Verzonden '{message}' naar {queue_name}")
+    logging.info(f" Is even({n})")
+    response = is_even(n)
 
-# Sluit de verbinding
-connection.close()
+    ch.basic_publish(exchange='',
+                     routing_key=props.reply_to,
+                     properties=pika.BasicProperties(correlation_id=props.correlation_id),
+                     body=str(response))
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+
+channel.basic_qos(prefetch_count=1)
+channel.basic_consume(queue='register', on_message_callback=on_request)
+
+print("Awaiting RPC requests")
+channel.start_consuming()

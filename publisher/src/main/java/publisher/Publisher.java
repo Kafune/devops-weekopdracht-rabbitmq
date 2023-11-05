@@ -17,6 +17,7 @@ public class Publisher {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("rabbitmq");
         factory.setRequestedHeartbeat(3600);
+        factory.setConnectionTimeout(3600);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
