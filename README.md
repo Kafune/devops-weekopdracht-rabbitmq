@@ -8,6 +8,13 @@ De microservices zijn gemaakt in verschillende programmeertalen. De verdeling er
 - Python -> Eurocardservice & AbonneeRegistratieservice
 - Java -> Publisherservice
 
+## Werking
+
+Om de applicatie uit te voeren moet er het volgende gebeuren:
+
+* Navigeer naar de hoofdfolder van de applicatie
+* Voer het command ```docker compose up --build``` uit. Dit start de applicatie op. abonneeRegistratie is te bereiken via een POST request op poort 8080.
+* Stuur een bericht naar abonneeRegistratie door de volgende command uit te voeren. ```curl -X POST -d <creditcardnummer> http://localhost:8080```. Hierbij kan creditcardnummer een even of een onevengetal zijn. Om deze command uit te voeren moet een nieuwe window geopend worden.  
 ## Logging
 
 Om te kijken of alles daadwerkelijk werkt hebben wij gebruik gemaakt van logs. De logs die hieronder in het voorbeeld te zien zijn betekenen hetvolgende:
@@ -39,6 +46,6 @@ routing/keys voor de twee classes
 - Exchange: 'topic_logs'
 - routing_key: 'publish.subscribe'
 
-'publisch.*' voor Publisher
+'publish.*' voor Publisher
 
 '*.subscribe' voor Subscribe
