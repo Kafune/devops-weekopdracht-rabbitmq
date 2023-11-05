@@ -5,14 +5,13 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
+import java.util.Arrays;
 
 public class Publisher {
 
     private static final String EXCHANGE_NAME = "publisher";
 
-    public static void main(String[] args) throws IOException, TimeoutException {
+    public static void main(String[] args) throws Exception {
         // Create connection
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("rabbitmq");
@@ -22,7 +21,7 @@ public class Publisher {
         Channel channel = connection.createChannel();
 
         // Get queue
-        channel.exchangeDeclare(EXCHANGE_NAME, "publisher_topic");
+        channel.exchangeDeclare(EXCHANGE_NAME, "topic");
         String queueName = channel.queueDeclare().getQueue();
 
         if (args.length < 1) {
