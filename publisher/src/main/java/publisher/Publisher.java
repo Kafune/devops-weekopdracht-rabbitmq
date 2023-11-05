@@ -15,7 +15,7 @@ public class Publisher {
     public static void main(String[] args) throws IOException, TimeoutException {
         // Create connection
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost("rabbitmq");
         factory.setRequestedHeartbeat(3600);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
