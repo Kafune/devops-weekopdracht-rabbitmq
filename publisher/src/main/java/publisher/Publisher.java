@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 public class Publisher {
 
-    private static final String EXCHANGE_NAME = "publisher";
+    private static final String EXCHANGE_NAME = "topic_logs";
 
     public static void main(String[] args) throws Exception {
         // Create connection
@@ -21,7 +21,7 @@ public class Publisher {
         Channel channel = connection.createChannel();
 
         // Get queue
-        channel.exchangeDeclare(EXCHANGE_NAME, "topic_logs");
+        channel.exchangeDeclare(EXCHANGE_NAME, "topic");
         String queueName = channel.queueDeclare().getQueue();
 
         if (args.length < 1) {
