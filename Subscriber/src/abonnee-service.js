@@ -27,7 +27,7 @@ amqp.connect('amqp://rabbitmq:5672', function(error0, connection) {
 
       channel.consume(q.queue, function(msg) {
         if(msg.content) {
-            console.log(" [x] %s", msg.content.toString());
+            console.log("[x] Nieuw bericht: %s", msg.content.toString());
           }
       }, {
         noAck: true
