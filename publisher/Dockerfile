@@ -9,5 +9,5 @@ RUN mvn -f /home/app/pom.xml clean package
 FROM openjdk:11-jre-slim
 WORKDIR /home/app
 COPY ./target/publisher-jar-with-dependencies.jar publisher.jar
-ENTRYPOINT ["java", "-jar", "publisher.jar", "publish.#"]
+ENTRYPOINT ["java", "-jar", "publisher.jar", "publish.*"]
 EXPOSE 9000
