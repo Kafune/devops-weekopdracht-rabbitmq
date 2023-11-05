@@ -1,47 +1,44 @@
 # RabbitMQ Weekopdracht 4
 
-Voor deze opdracht hebben Kachung Li, Roy van de Wiel en Wijnand van Zyl een aantal microservices gemaakt die met elkaar communiceren via RabbitMQ. Bij het realiseren van deze microservices zijn de volgende talen gebruikt:
+Voor deze opdracht is er een applicatie gemaakt die bestaat uit verschillende microservices. De microservices communiceren met elkaar doormiddel van RabbitMQ om de applicatie op deze manier volledig fucntioneel te maken. De architectuur van de applicatie is terug te vinden in opdracht.md. 
+
+De microservices zijn gemaakt in verschillende programmeertalen. De verdeling ervan ziet er als volg uit:
 
 - Javascript -> Abonneeservice
-- Python -> Eurocardservice
-- Java -> AbonneeRegistratieservice & Publisherservice
+- Python -> Eurocardservice & AbonneeRegistratieservice
+- Java -> Publisherservice
 
-TODO: Screenshot of GIF toevoegen van werking RabbitMQ
+## Logging
 
-## Werking
+Om te kijken of alles daadwerkelijk werkt hebben wij gebruik gemaakt van logs. De logs die hieronder in het voorbeeld te zien zijn betekenen hetvolgende:
 
-De AbonneeRegistratie service stuurt een bericht via RabbitMQ naar de EuroCard om aan te geven dat de gebruiker kan registreren. Deze checkt of het creditcardnummer dat is opgegeven is legitiem is of niet. Als het creditcardnummer even is, is hij legitiem. Wanneer het credicardnummer oneven is het creditcardnummer vals. De uitkomst hiervan stuurt de publisher terug naar AbonneeRegistratie. Wannneer AbonneerRegistratite terugkrijgt dat het credicarnummer legitiem is, stuurt hij de gegevens via RabbitMQ door naar Subscriber en Publischer. Deze printen de credicardgegevens vervolgens uit. 
+* ```Requesting creditcardValidation(<creditcardnummer>)``` request met ```<creditcardnummer>``` is binnengekomen en wordt verstuurd naar de microservice Eurocard.
 
-## Hoe gebruik ik de applicatie met RabbitMQ?
+* ```Is even <creditcardnummer>``` geeft aan dat ```<Creditcardnummer>``` is aangekomen bij Eurocard
 
-### Abonneeregistratie
+* ```Received: <Boolean>``` Abonneeregistratie heeft bericht teruggekregen van Eurocard waarbij  ```<Boolean>``` hetgeen is wat terug is gestuurd. Het is ```True```  wanneer creditcardnummer even is en ```False``` wanneer het oneven is
 
-- Gaat in de folder van AbonneeRegistartie zitten.
-- ``` docker build -t <naam-image> ``` waarbij ```<naam-image>``` de naam is die je aan de image wil geven. Deze maakt een image van ```abonneeRegistartie.py```.
-- ``` docker run -p 8080:8080 <naam-image> ``` waarbij ```<naam-image>``` de naam is die je aan de image hebt gegeven in de vorige command. Deze build de image op <http://172.17.0.4:8080/>. Dit is de localhost op poort 8080.
-- stuur credicardnummer door via volgende command: ```curl -X POST -d <creditcardnummer> http://localhost:8080``` waarbij ```<credicardnummer>``` een string is van een creditcardnummer dat alleen bestaaat uit cijfers. Een voorbeeld hiervan kan dus zijn : ```35742527542722```
+* ```[x] Nieuw bericht: Validated Creditcardnumber: <creditcardnummer>``` geeft aan dat ```< <creditcardnummer>``` is aangekomen bij subscriber.
 
-#### logging
+* ```[x] Nieuw bericht: 'publish.subscribe':'Validated Creditcardnumber: <creditcardnummer>'``` geeft aan dat  ```<creditcardnummer>``` is aangekomen bij publisher.
 
-Bij Abonneeregistratie is logging toegevoegd. De volgende logs zeggen het volgende over Abonneeregistratie:
+![logs](logs.png)
 
-- ```Requesting credicardValidation(<creditcardnummer>)``` stuurt ```<credicardnummer>``` door naar Eurocard.
-- ```Received: <boolean>``` heeft ```<Boolean>``` ontvangen van Eurocard.
-- ```"Data received and sent to RabbitMQ successfully!"``` als bericht is verstuurd naar subscriber/publisher en verwerkt in RabbitMQ.
 
-#### Routing/keys
+### Routing/keys
 
 routing/keys voor de twee classes
 
-##### CreditcardValidatieClient
+#### CreditcardValidatieClient & eurocard
 
 - Exchange: ''
 - Routing_Key: 'register'
 
-#### NotificatieClient
+### NotificatieClient & Publisher/Subscriber
 
 - Exchange: 'topic_logs'
 - routing_key: 'publish.subscribe'
 
-Voor Publish moet routing_key dus 'publish.*' worden.
-Voor Subscribe moet routing_key dus '*.subscribe' worden.
+'publisch.*' voor Publisher
+
+'*.subscribe' voor Subscribe
