@@ -21,7 +21,7 @@ public class Publisher {
         Channel channel = connection.createChannel();
 
         // Get queue
-        channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+        channel.exchangeDeclare(EXCHANGE_NAME, "topic_logs");
         String queueName = channel.queueDeclare().getQueue();
 
         if (args.length < 1) {
