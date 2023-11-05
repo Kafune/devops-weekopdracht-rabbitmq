@@ -17,7 +17,7 @@ amqp.connect('amqp://rabbitmq:5672', { heartbeat: 3600 }, function(error0, conne
     if (error1) {
       throw error1;
     }
-    var exchange = 'subscriber_logs';
+    var exchange = 'topic_logs';
 
     channel.assertExchange(exchange, 'topic', {
       durable: false

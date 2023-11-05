@@ -2,7 +2,7 @@
 
 var amqp = require('amqplib/callback_api');
 
-amqp.connect('amqp://rabbitmq:5632', function(error0, connection) {
+amqp.connect('amqp://rabbitmq:5672', function(error0, connection) {
   if (error0) {
     throw error0;
   }
@@ -10,9 +10,9 @@ amqp.connect('amqp://rabbitmq:5632', function(error0, connection) {
     if (error1) {
       throw error1;
     }
-    var exchange = 'logs';
+    var exchange = 'topic_logs';
 
-    channel.assertExchange(exchange, 'fanout', {
+    channel.assertExchange(exchange, 'topic', {
       durable: false
     });
 
@@ -23,7 +23,7 @@ amqp.connect('amqp://rabbitmq:5632', function(error0, connection) {
         throw error2;
       }
       console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
-      channel.bindQueue(q.queue, exchange, '');
+      channel.bindQueue(q.queue, exchange, '*.subscribe');
 
       channel.consume(q.queue, function(msg) {
         if(msg.content) {
