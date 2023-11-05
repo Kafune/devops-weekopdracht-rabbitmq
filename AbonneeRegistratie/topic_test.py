@@ -3,7 +3,7 @@ import pika
 class NotificationReceiver:
     def __init__(self):
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
+            pika.ConnectionParameters(host='localhost', heartbeat=3600))
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='topic_logs', exchange_type='topic')
 

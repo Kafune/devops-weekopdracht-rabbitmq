@@ -11,7 +11,7 @@ class CreditcardValidatieClient(object):
 
     def __init__(self):
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='172.17.0.2', port=5672))
+            pika.ConnectionParameters(host='rabbitmq', port=5672, heartbeat=3600))
         self.channel = self.connection.channel()
 
         result = self.channel.queue_declare(queue='', exclusive=True)
@@ -46,7 +46,7 @@ class CreditcardValidatieClient(object):
 class NotificatieClient:
     def __init__(self):
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='172.17.0.2', port=5672))
+            pika.ConnectionParameters(host='rabbitmq', port=5672, heartbeat=3600))
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange='topic_logs', exchange_type='topic')
 

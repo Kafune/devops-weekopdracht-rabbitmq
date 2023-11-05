@@ -31,7 +31,7 @@ def callback(ch, method, properties, body):
       
 while True:
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.17.0.2', port=5672))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', port=5672, heartbeat=3600))
         channel = connection.channel()
         channel.queue_declare(queue='creditcard_queue')
         channel.exchange_declare(exchange='creditcard_validation', exchange_type='direct')

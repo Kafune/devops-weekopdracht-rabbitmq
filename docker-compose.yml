@@ -31,6 +31,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+    ports:
+      - 9001:9001
   eurocard:
    build: ./eurocard
    depends_on:
@@ -38,7 +40,20 @@ services:
       condition: service_healthy
    ports: 
    - 5000:5000
-  
+  abonneeregistratie:
+    build: ./AbonneeRegistratie
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports: 
+    - 8080:8080
+  rpc_server:
+    build: ./rpc_server
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports: 
+    - 8081:8081
 networks:
   default:
     driver: bridge

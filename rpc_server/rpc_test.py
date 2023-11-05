@@ -4,7 +4,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='172.17.0.2', port=5672))
+    pika.ConnectionParameters(host='rabbitmq', port=5672, heartbeat=3600))
 
 channel = connection.channel()
 

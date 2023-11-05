@@ -15,13 +15,13 @@ public class Publisher {
     public static void main(String[] args) throws IOException, TimeoutException {
         // Create connection
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("rabbitmq");
-        factory.setPort(5672);
+        factory.setHost("localhost");
+        factory.setRequestedHeartbeat(3600);
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
         // Get queue
-        channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+        channel.exchangeDeclare(EXCHANGE_NAME, "publisher_topic");
         String queueName = channel.queueDeclare().getQueue();
 
         if (args.length < 1) {

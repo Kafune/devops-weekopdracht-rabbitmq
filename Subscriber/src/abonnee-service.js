@@ -9,7 +9,7 @@ if (args.length == 0) {
   process.exit(1);
 }
 
-amqp.connect('amqp://rabbitmq:5672', function(error0, connection) {
+amqp.connect('amqp://rabbitmq:5672', { heartbeat: 3600 }, function(error0, connection) {
   if (error0) {
     throw error0;
   }
@@ -17,7 +17,7 @@ amqp.connect('amqp://rabbitmq:5672', function(error0, connection) {
     if (error1) {
       throw error1;
     }
-    var exchange = 'topic_logs';
+    var exchange = 'subscriber_logs';
 
     channel.assertExchange(exchange, 'topic', {
       durable: false
