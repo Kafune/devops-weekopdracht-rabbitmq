@@ -1,4 +1,4 @@
-from flask import Flask, request
+rom flask import Flask, request
 import pika
 import uuid
 import logging
@@ -43,6 +43,12 @@ class CreditcardValidatieClient(object):
         self.connection.process_data_events(time_limit=None)
         return self.response
 
+    def send_confirmation(self, confirmation_message, routing_key):
+        self.channel.basic_publish(
+            exchange='subscriber_logs',  
+            routing_key=routing_key, 
+            body=confirmation_message)
+
 class NotificatieClient:
     def __init__(self):
         self.connection = pika.BlockingConnection(
@@ -72,10 +78,13 @@ def receive_post():
     logging.info(f"Received: {response}")
 
     if response:
-        notificatieClient.send_notification('publish.subscribe', f'Validated Creditcardnumber: {decoded_data}')
+        confirmation_message = f'Validated Creditcardnumber: {decoded_data}'
+        routing_key = 'validation.confirmed'  # Specify the appropriate routing key for validation confirmations
+        notificatieClient.send_notification('publish.subscribe', confirmation_message)
+        creditcardValidatieClient.send_confirmation(confirmation_message, routing_key)
 
     return "Data received and sent to RabbitMQ successfully!"
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080) 
+    app.run(debug=True, host='0.0.0.0', port=8080)
 
