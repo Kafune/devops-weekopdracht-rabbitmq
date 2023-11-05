@@ -37,8 +37,7 @@ public class Publisher {
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
-            System.out.println(" [x] Nieuw bericht: '" +
-                    delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
+            System.out.println(" [x] Nieuw bericht: '" + message + "'");
         };
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
     }
