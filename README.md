@@ -34,7 +34,7 @@ Om te kijken of alles daadwerkelijk werkt hebben wij gebruik gemaakt van logs. D
 
 ### Routing/keys
 
-routing/keys voor de twee classes
+routing/keys die gebruikt zijn voor de applicatie
 
 #### CreditcardValidatieClient & eurocard
 
